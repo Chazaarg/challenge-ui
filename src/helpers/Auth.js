@@ -32,7 +32,7 @@ export default function Auth(WrappedComponent) {
     };
     getSession = async () => {
       try {
-        const res = await axios.get("https://api.meetup.com/session", {
+        const res = await axios.get("http://localhost:3002/session", {
           headers: {
             Authorization: this.state.token
           }
@@ -52,12 +52,12 @@ export default function Auth(WrappedComponent) {
     login = async credentials => {
       try {
         const loginResponse = await axios.post(
-          "https://api.meetup.com/login",
+          "http://localhost:3002/login",
           credentials
         );
         setCookie("token", loginResponse.data.token, 1);
 
-        const res = await axios.get("https://api.meetup.com/session", {
+        const res = await axios.get("http://localhost:3002/session", {
           headers: {
             Authorization: loginResponse.data.token
           }
@@ -94,6 +94,7 @@ export default function Auth(WrappedComponent) {
         <WrappedComponent
           session={session}
           getSession={this.getSession}
+          login={this.login}
           {...this.props}
         />
       );

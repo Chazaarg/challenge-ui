@@ -33,13 +33,6 @@ class Routes extends Component {
     }
   }
 
-  private = (Component, props) => {
-    if (this.state.isAuthenticated) {
-      return <Component {...props} />;
-    }
-    return <Redirect to="/login" />;
-  };
-
   render() {
     const { isAuthenticated } = this.state;
     const { session } = this.props;
@@ -55,7 +48,7 @@ class Routes extends Component {
         {...rest}
         render={props =>
           isAuthenticated === false ? (
-            <Component {...props} />
+            <Component {...props} auth={{ ...this.props }} />
           ) : (
             <Redirect to="/" />
           )
