@@ -95,6 +95,7 @@ export default function Auth(WrappedComponent) {
           session={session}
           getSession={this.getSession}
           login={this.login}
+          logout={this.logout}
           {...this.props}
         />
       );
