@@ -30,7 +30,12 @@ export default function Auth(WrappedComponent) {
       session: {},
       token: getCookie("token")
     };
-    getSession = async () => {
+    getSession = async (token = null) => {
+      if (token) {
+        setCookie("token", token, 1);
+
+        this.setState({ token });
+      }
       try {
         const res = await axios.get("http://localhost:3002/session", {
           headers: {
@@ -38,12 +43,6 @@ export default function Auth(WrappedComponent) {
           }
         });
         this.setState({ session: res.data });
-        let session = {
-          id: 1,
-          name: "admin",
-          lastname: "admin",
-          email: "admin@admin.com"
-        };
       } catch (error) {
         this.setState({ session: "anonymous" });
       }

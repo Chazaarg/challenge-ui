@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-
+import axios from "axios";
 export default class Login extends Component {
   state = {
     step: 1
@@ -17,6 +17,7 @@ export default class Login extends Component {
       case 2:
         return (
           <RegisterForm
+            getSession={this.props.auth.getSession}
             nextStep={this.nextStep}
             prevStep={this.prevStep}
           ></RegisterForm>
@@ -56,19 +57,23 @@ export default class Login extends Component {
 class LoginForm extends Component {
   state = {
     email: "",
-    password: ""
+    password: "",
+    error: ""
   };
   handleChange = ({ target }) => {
-    this.setState({ [target.name]: target.value });
+    this.setState({ error: "", [target.name]: target.value });
   };
   handleSubmit = async e => {
     e.preventDefault();
     const { email, password } = this.state;
-    this.props.login({ email, password });
+    let res = await this.props.login({ email, password });
+    if (res.type === "error") {
+      this.setState({ error: res.message });
+    }
   };
   render() {
     const { nextStep } = this.props;
-    const { email, password } = this.state;
+    const { email, password, error } = this.state;
     return (
       <React.Fragment>
         <div className="pt-5 pb-5">
@@ -79,11 +84,7 @@ class LoginForm extends Component {
             style={{ width: "70px", height: "70px" }}
           />
           <p className="text-center text-uppercase mt-3">Login</p>
-          <form
-            className="form text-center"
-            onSubmit={this.handleSubmit}
-            method="POST"
-          >
+          <form className="form text-center" onSubmit={this.handleSubmit}>
             <div className="form-group input-group-md">
               <input
                 type="email"
@@ -109,9 +110,8 @@ class LoginForm extends Component {
                 onChange={this.handleChange}
                 placeholder="Password"
               />
-              <div className="invalid-feedback">
-                Errors in password during form validation, also add .is-invalid
-                class to the input fields
+              <div className={`invalid-feedback ${error && "d-block"}`}>
+                {error}
               </div>
             </div>
             <button
@@ -139,13 +139,32 @@ class RegisterForm extends Component {
     email: "",
     name: "",
     lastname: "",
-    password: ""
+    password: "",
+    error: ""
+  };
+  handleSubmit = async e => {
+    e.preventDefault();
+    const res = await axios.post("http://localhost:3002/users", this.state);
+    if (res.data.type === "error") {
+      this.setState({
+        error: res.data.message
+      });
+
+      return;
+    } else if (res.data.type === "success")
+      return this.props.getSession(res.data.token);
+
+    this.setState({
+      error: "Ha habido un error inesperado"
+    });
+    return;
   };
   handleChange = ({ target }) => {
-    this.setState({ [target.name]: target.value });
+    this.setState({ [target.name]: target.value, error: "" });
   };
   render() {
     const { prevStep } = this.props;
+    const { password, email, lastname, name, error } = this.state;
     return (
       <React.Fragment>
         <div className="pt-5 pb-5">
@@ -156,12 +175,15 @@ class RegisterForm extends Component {
             style={{ width: "70px", height: "70px" }}
           />
           <p className="text-center text-uppercase mt-3">Registrarme</p>
-          <form className="form text-center" action="#" method="POST">
+          <form className="form text-center" onSubmit={this.handleSubmit}>
             <div className="form-group input-group-md">
               <input
                 type="email"
                 className="form-control"
+                value={email}
+                onChange={this.handleChange}
                 id="email"
+                name="email"
                 aria-describedby="emailHelp"
                 placeholder="Enter email"
               />
@@ -172,14 +194,48 @@ class RegisterForm extends Component {
             </div>
             <div className="form-group input-group-md">
               <input
-                type="password"
+                type="name"
                 className="form-control"
-                id="password"
-                placeholder="Password"
+                onChange={this.handleChange}
+                value={name}
+                id="name"
+                name="name"
+                aria-describedby="nameHelp"
+                placeholder="Ingresar nombre"
               />
               <div className="invalid-feedback">
-                Errors in password during form validation, also add .is-invalid
+                Errors in email during form validation, also add .is-invalid
                 class to the input fields
+              </div>
+            </div>
+            <div className="form-group input-group-md">
+              <input
+                type="lastname"
+                className="form-control"
+                value={lastname}
+                id="lastname"
+                name="lastname"
+                onChange={this.handleChange}
+                aria-describedby="lastnameHelp"
+                placeholder="Ingresar apellido"
+              />
+              <div className="invalid-feedback">
+                Errors in email during form validation, also add .is-invalid
+                class to the input fields
+              </div>
+            </div>
+            <div className="form-group input-group-md">
+              <input
+                type="password"
+                name="password"
+                onChange={this.handleChange}
+                className="form-control"
+                value={password}
+                id="password"
+                placeholder="Contraseña"
+              />
+              <div className={`invalid-feedback ${error && "d-block"}`}>
+                {error}
               </div>
             </div>
             <button

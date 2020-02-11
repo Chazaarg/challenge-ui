@@ -8,10 +8,6 @@ import {
   Nav,
   NavItem,
   NavLink,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
   NavbarText
 } from "reactstrap";
 export default function Wrapper({ children, session, logout }) {
@@ -46,8 +42,11 @@ export default function Wrapper({ children, session, logout }) {
                 </NavLink>
               </NavItem>
             </Nav>
+            <NavbarText style={{ marginRight: "5rem" }}>
+              {session.name}
+            </NavbarText>
             <NavbarText
-              style={{ marginRight: "5rem", cursor: "poiner" }}
+              style={{ marginRight: "5rem", cursor: "pointer" }}
               onClick={logout}
             >
               Cerrar Sesión
