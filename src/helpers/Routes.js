@@ -13,6 +13,7 @@ import Auth from "./Auth";
 import NotFound from "../components/pages/NotFound";
 import Home from "../components/pages/home";
 import Login from "../components/pages/login";
+import NewMeetup from "../components/pages/meetups/new";
 import Wrapper from "../components/layout/Wrapper";
 
 class Routes extends Component {
@@ -80,6 +81,11 @@ class Routes extends Component {
           <Wrapper session={session} logout={this.props.logout}>
             <Switch>
               <Route exact path="/" render={privateRoute(Home)} />
+              <Route
+                exact
+                path="/meetups/new"
+                render={privateRoute(NewMeetup)}
+              />
               <AnonymousRoute path="/login" component={Login} />
               <Route render={privateRoute(NotFound)} />
             </Switch>

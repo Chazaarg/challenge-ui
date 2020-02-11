@@ -20,7 +20,9 @@ export default function Wrapper({ children, session, logout }) {
     <React.Fragment>
       <header>
         <Navbar color="light" light expand="md">
-          <NavbarBrand href="/">MeetApp</NavbarBrand>
+          <NavbarBrand tag={Link} to="/">
+            MeetApp
+          </NavbarBrand>
           <NavbarToggler onClick={toggle} />
           <Collapse isOpen={isOpen} navbar>
             <Nav className="mr-auto" navbar>
@@ -31,7 +33,7 @@ export default function Wrapper({ children, session, logout }) {
               </NavItem>
               {session.sector === "admin" && (
                 <NavItem>
-                  <NavLink tag={Link} to="/meetups">
+                  <NavLink tag={Link} to="/meetups/new">
                     Crear Meetup
                   </NavLink>
                 </NavItem>
@@ -54,7 +56,7 @@ export default function Wrapper({ children, session, logout }) {
           </Collapse>
         </Navbar>
       </header>
-      {children}
+      <div className="container mt-4">{children}</div>
     </React.Fragment>
   );
 }
