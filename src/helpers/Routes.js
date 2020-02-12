@@ -15,6 +15,7 @@ import Home from "../components/pages/home";
 import Login from "../components/pages/login";
 import NewMeetup from "../components/pages/meetups/new";
 import Wrapper from "../components/layout/Wrapper";
+import Meetup from "../components/pages/meetup";
 
 class Routes extends Component {
   componentDidMount() {
@@ -81,6 +82,11 @@ class Routes extends Component {
           <Wrapper session={session} logout={this.props.logout}>
             <Switch>
               <Route exact path="/" render={privateRoute(Home)} />
+              <Route
+                exact
+                path="/meetups/:meetup_id"
+                render={privateRoute(Meetup)}
+              />
               <Route
                 exact
                 path="/meetups/new"

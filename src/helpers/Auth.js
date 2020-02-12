@@ -30,6 +30,9 @@ export default function Auth(WrappedComponent) {
       session: {},
       token: getCookie("token")
     };
+    getToken = () => {
+      return this.state.token;
+    };
     getSession = async (token = null) => {
       if (token) {
         setCookie("token", token, 1);
@@ -95,6 +98,7 @@ export default function Auth(WrappedComponent) {
           getSession={this.getSession}
           login={this.login}
           logout={this.logout}
+          getToken={this.getToken}
           {...this.props}
         />
       );
