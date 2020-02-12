@@ -39,7 +39,7 @@ class Routes extends Component {
     const { session } = this.props;
     const privateRoute = Component => props => {
       if (this.state.isAuthenticated) {
-        return <Component {...props} />;
+        return <Component {...props} auth={{ ...this.props }} />;
       }
       return <Redirect to="/login" />;
     };

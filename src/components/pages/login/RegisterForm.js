@@ -15,7 +15,6 @@ class RegisterForm extends Component {
     const res = await axios.post("http://localhost:3002/users", this.state);
     if (res.data.type === "error") {
       this.props.validation.throwErrors(res.data.errors);
-      console.log(res.data.errors);
       return;
     } else if (res.data.type === "success")
       return this.props.getSession(res.data.token);
