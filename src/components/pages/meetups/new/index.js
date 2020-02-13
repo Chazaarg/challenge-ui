@@ -41,12 +41,15 @@ class NewMeetup extends Component {
 
   handleSubmit = async e => {
     e.preventDefault();
+    this.setState({ loading: true });
     const res = await axios.post("http://localhost:3002/meetups", this.state, {
       headers: {
         Authorization: this.props.auth.getToken()
       }
     });
     if (res.data.type === "error") {
+      this.setState({ loading: false });
+
       this.props.validation.throwErrors(res.data.errors);
       return;
     }
@@ -151,6 +154,7 @@ class NewMeetup extends Component {
                 color="primary"
                 style={{ width: "50%" }}
                 className="m-auto"
+                disabled={this.state.loading}
                 onClick={this.handleSubmit}
               >
                 Aceptar

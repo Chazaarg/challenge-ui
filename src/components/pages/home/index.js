@@ -5,9 +5,7 @@ import {
   CardText,
   Row,
   CardTitle,
-  CardSubtitle,
   ListGroup,
-  ListGroupItem,
   Spinner,
   Button
 } from "reactstrap";

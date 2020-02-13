@@ -21,8 +21,10 @@ export default class Meetup extends Component {
     notFound: false
   };
   handleInscribe = async () => {
+    this.setState({ loadingInscribe: true });
     let res = await axios.post(
       `http://localhost:3002/meetups/${this.state.meetup.id}/inscriptions`,
+      null,
       {
         headers: {
           Authorization: this.props.auth.getToken()
@@ -32,7 +34,8 @@ export default class Meetup extends Component {
     this.setState({
       meetup: {
         ...this.state.meetup,
-        inscripted: true
+        loadingInscribe: false,
+        user_status: "inscripted"
       }
     });
   };
@@ -76,6 +79,83 @@ export default class Meetup extends Component {
     birras *= meetup.inscripted_users;
     return Math.ceil(birras / 6);
   };
+  updateUserStatus = async status => {
+    const { meetup } = this.state;
+    this.setState({ loadingUpdate: true });
+
+    let res = await axios.put(
+      `http://localhost:3002/meetups/${meetup.id}/inscriptions`,
+      { status },
+      {
+        headers: {
+          Authorization: this.props.auth.getToken()
+        }
+      }
+    );
+    this.setState({ loadingUpdate: false });
+
+    if (res.data.type === "success") {
+      this.setState({
+        meetup: {
+          ...this.state.meetup,
+          user_status: "check-in"
+        }
+      });
+    }
+  };
+  displayButton = () => {
+    const { meetup } = this.state;
+
+    switch (meetup.user_status) {
+      case null:
+        if (meetup.status === "finished")
+          return (
+            <Alert color="warning" className="text-center">
+              ¡El meetup ya ha terminado!
+            </Alert>
+          );
+        return (
+          <Button
+            disabled={this.state.loadingInscribe}
+            onClick={this.handleInscribe}
+          >
+            Inscribirme
+          </Button>
+        );
+      case "inscripted":
+        if (meetup.status === "unstarted")
+          return (
+            <Alert color="success" className="text-center">
+              Te has inscripto con éxito
+            </Alert>
+          );
+        return (
+          <Button
+            color="success"
+            onClick={() => this.updateUserStatus("check-in")}
+          >
+            Check-In
+          </Button>
+        );
+
+      case "check-in":
+        if (meetup.status === "inProgress")
+          return (
+            <Alert color="success" className="text-center">
+              ¡Que disfrutes el meetup!
+            </Alert>
+          );
+        return (
+          <Alert color="success" className="text-center">
+            El meetup ya terminó, esperamos que lo hayas disfrutado
+          </Alert>
+        );
+
+      default:
+        break;
+    }
+  };
+
   render() {
     const { session } = this.props.auth;
     const { loading, meetup, notFound } = this.state;
@@ -107,14 +187,22 @@ export default class Meetup extends Component {
           <CardText>
             <ListGroup>
               <ListGroupItem>
-                {meetup.status}{" "}
-                {moment(meetup.start_time)
-                  .locale("es")
-                  .calendar()}
+                Inicio:{" "}
+                <b>
+                  {moment(meetup.start_time)
+                    .locale("es")
+                    .format("YYYY-MM-DD HH:ss")}
+                </b>{" "}
+                <br></br>
+                Fin:{" "}
+                <b>
+                  {moment(meetup.end_time)
+                    .locale("es")
+                    .format("YYYY-MM-DD HH:ss")}
+                </b>
               </ListGroupItem>
               <ListGroupItem>
-                {meetup.status === "Finalizó" ? "Hizo" : "Hará"} aproximadamente{" "}
-                {Math.trunc(meetup.temperature)}°C
+                Temperatura estimada: {Math.trunc(meetup.temperature)}°C
               </ListGroupItem>
               <ListGroupItem>
                 Usuarios inscriptos: {meetup.inscripted_users}
@@ -126,13 +214,7 @@ export default class Meetup extends Component {
               )}
             </ListGroup>
           </CardText>
-          {meetup.inscripted ? (
-            <Alert color="success" className="text-center">
-              ¡Te has inscripto con éxito!
-            </Alert>
-          ) : (
-            <Button onClick={this.handleInscribe}>Inscribirme</Button>
-          )}
+          {this.displayButton()}
         </Card>
       </div>
     );

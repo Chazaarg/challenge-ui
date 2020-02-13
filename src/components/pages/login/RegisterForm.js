@@ -1,18 +1,21 @@
 import React, { Component } from "react";
 import withValidation from "../../../helpers/withValidation";
 import axios from "axios";
-import { Input, FormText } from "reactstrap";
+import { Input, FormText, Button } from "reactstrap";
 
 class RegisterForm extends Component {
   state = {
     email: "",
     name: "",
     lastname: "",
-    password: ""
+    password: "",
+    loading: false
   };
   handleSubmit = async e => {
     e.preventDefault();
+    this.setState({ loading: true });
     const res = await axios.post("http://localhost:3002/users", this.state);
+    this.setState({ loading: false });
     if (res.data.type === "error") {
       this.props.validation.throwErrors(res.data.errors);
       return;
@@ -108,12 +111,13 @@ class RegisterForm extends Component {
                 <FormText color="danger">{errors.password.message}</FormText>
               )}
             </div>
-            <button
+            <Button
               className="btn btn-lg btn-block btn-primary mt-4"
               type="submit"
+              disabled={this.state.loading}
             >
               Registrarme
-            </button>
+            </Button>
           </form>
         </div>
         <p

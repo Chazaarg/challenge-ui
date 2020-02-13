@@ -52,6 +52,7 @@ export default function Auth(WrappedComponent) {
     };
 
     login = async credentials => {
+      this.setState({ loading: true });
       try {
         const loginResponse = await axios.post(
           "http://localhost:3002/login",
@@ -65,13 +66,15 @@ export default function Auth(WrappedComponent) {
           }
         });
 
-        this.setState({ session: res.data });
+        this.setState({ session: res.data, loading: false });
         return {
           type: "success",
           message: "Ingresó con éxito."
         };
       } catch (error) {
         if (error.request.status === 401) {
+          this.setState({ loading: false });
+
           return {
             type: "error",
             message: error.response.data.message
