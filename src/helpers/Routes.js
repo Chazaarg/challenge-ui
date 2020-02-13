@@ -84,14 +84,15 @@ class Routes extends Component {
               <Route exact path="/" render={privateRoute(Home)} />
               <Route
                 exact
-                path="/meetups/:meetup_id"
-                render={privateRoute(Meetup)}
-              />
-              <Route
-                exact
                 path="/meetups/new"
                 render={privateRoute(NewMeetup)}
               />
+              <Route
+                exact
+                path="/meetups/:meetup_id"
+                render={privateRoute(Meetup)}
+              />
+
               <AnonymousRoute path="/login" component={Login} />
               <Route render={privateRoute(NotFound)} />
             </Switch>
