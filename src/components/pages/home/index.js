@@ -18,11 +18,14 @@ export default class Home extends Component {
     loading: true
   };
   componentDidMount = async () => {
-    let res = await axios.get("http://localhost:3002/meetups", {
-      headers: {
-        Authorization: this.props.auth.getToken()
+    let res = await axios.get(
+      "https://meetapp-challenge.herokuapp.com/meetups",
+      {
+        headers: {
+          Authorization: this.props.auth.getToken()
+        }
       }
-    });
+    );
     this.setState({ meetups: res.data, loading: false });
   };
   render() {

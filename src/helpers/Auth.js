@@ -40,11 +40,14 @@ export default function Auth(WrappedComponent) {
         this.setState({ token });
       }
       try {
-        const res = await axios.get("http://localhost:3002/session", {
-          headers: {
-            Authorization: this.state.token
+        const res = await axios.get(
+          "https://meetapp-challenge.herokuapp.com/session",
+          {
+            headers: {
+              Authorization: this.state.token
+            }
           }
-        });
+        );
         this.setState({ session: res.data });
       } catch (error) {
         this.setState({ session: "anonymous" });
@@ -55,16 +58,19 @@ export default function Auth(WrappedComponent) {
       this.setState({ loading: true });
       try {
         const loginResponse = await axios.post(
-          "http://localhost:3002/login",
+          "https://meetapp-challenge.herokuapp.com/login",
           credentials
         );
         setCookie("token", loginResponse.data.token, 1);
 
-        const res = await axios.get("http://localhost:3002/session", {
-          headers: {
-            Authorization: loginResponse.data.token
+        const res = await axios.get(
+          "https://meetapp-challenge.herokuapp.com/session",
+          {
+            headers: {
+              Authorization: loginResponse.data.token
+            }
           }
-        });
+        );
 
         this.setState({ session: res.data, loading: false });
         return {

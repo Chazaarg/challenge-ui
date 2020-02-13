@@ -23,7 +23,7 @@ export default class Meetup extends Component {
   handleInscribe = async () => {
     this.setState({ loadingInscribe: true });
     let res = await axios.post(
-      `http://localhost:3002/meetups/${this.state.meetup.id}/inscriptions`,
+      `https://meetapp-challenge.herokuapp.com/meetups/${this.state.meetup.id}/inscriptions`,
       null,
       {
         headers: {
@@ -44,9 +44,12 @@ export default class Meetup extends Component {
     let meetup_id = this.props.match.params.meetup_id;
     let meetup = {};
     try {
-      meetup = await axios.get(`http://localhost:3002/meetups/${meetup_id}`, {
-        headers: { Authorization: token }
-      });
+      meetup = await axios.get(
+        `https://meetapp-challenge.herokuapp.com/meetups/${meetup_id}`,
+        {
+          headers: { Authorization: token }
+        }
+      );
       meetup = meetup.data;
     } catch (error) {
       this.setState({ notFound: true });
@@ -84,7 +87,7 @@ export default class Meetup extends Component {
     this.setState({ loadingUpdate: true });
 
     let res = await axios.put(
-      `http://localhost:3002/meetups/${meetup.id}/inscriptions`,
+      `https://meetapp-challenge.herokuapp.com/meetups/${meetup.id}/inscriptions`,
       { status },
       {
         headers: {

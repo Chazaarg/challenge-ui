@@ -14,7 +14,10 @@ class RegisterForm extends Component {
   handleSubmit = async e => {
     e.preventDefault();
     this.setState({ loading: true });
-    const res = await axios.post("http://localhost:3002/users", this.state);
+    const res = await axios.post(
+      "https://meetapp-challenge.herokuapp.com/users",
+      this.state
+    );
     this.setState({ loading: false });
     if (res.data.type === "error") {
       this.props.validation.throwErrors(res.data.errors);

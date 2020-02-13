@@ -42,11 +42,15 @@ class NewMeetup extends Component {
   handleSubmit = async e => {
     e.preventDefault();
     this.setState({ loading: true });
-    const res = await axios.post("http://localhost:3002/meetups", this.state, {
-      headers: {
-        Authorization: this.props.auth.getToken()
+    const res = await axios.post(
+      "https://meetapp-challenge.herokuapp.com/meetups",
+      this.state,
+      {
+        headers: {
+          Authorization: this.props.auth.getToken()
+        }
       }
-    });
+    );
     if (res.data.type === "error") {
       this.setState({ loading: false });
 
