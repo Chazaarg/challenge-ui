@@ -6,6 +6,7 @@ import {
   CardText,
   Row,
   Col,
+  Alert,
   ListGroup,
   ListGroupItem,
   Spinner
@@ -18,6 +19,22 @@ export default class Meetup extends Component {
     meetup: {},
     loading: true,
     notFound: false
+  };
+  handleInscribe = async () => {
+    let res = await axios.post(
+      `http://localhost:3002/meetups/${this.state.meetup.id}/inscriptions`,
+      {
+        headers: {
+          Authorization: this.props.auth.getToken()
+        }
+      }
+    );
+    this.setState({
+      meetup: {
+        ...this.state.meetup,
+        inscripted: true
+      }
+    });
   };
   componentDidMount = async () => {
     const token = this.props.auth.getToken();
@@ -44,6 +61,20 @@ export default class Meetup extends Component {
 
     meetup.temperature = res.data.currently.temperature;
     this.setState({ meetup, loading: false });
+  };
+
+  getBirras = () => {
+    const { meetup } = this.state;
+    let birras = 0;
+    if (meetup.temperature < 20) {
+      birras = 0.75;
+    } else if (meetup.temperature >= 20 && meetup.temperature <= 24) {
+      birras = 1;
+    } else {
+      birras = 2;
+    }
+    birras *= meetup.inscripted_users;
+    return Math.ceil(birras / 6);
   };
   render() {
     const { session } = this.props.auth;
@@ -86,14 +117,22 @@ export default class Meetup extends Component {
                 {Math.trunc(meetup.temperature)}°C
               </ListGroupItem>
               <ListGroupItem>
-                Usuarios inscriptos: {meetup.inscripted}
+                Usuarios inscriptos: {meetup.inscripted_users}
               </ListGroupItem>
               {session.sector === "admin" && (
-                <ListGroupItem>Birras necesarias: x</ListGroupItem>
+                <ListGroupItem>
+                  Cajas de birras necesarias: {this.getBirras()}
+                </ListGroupItem>
               )}
             </ListGroup>
           </CardText>
-          <Button>Go somewhere</Button>
+          {meetup.inscripted ? (
+            <Alert color="success" className="text-center">
+              ¡Te has inscripto con éxito!
+            </Alert>
+          ) : (
+            <Button onClick={this.handleInscribe}>Inscribirme</Button>
+          )}
         </Card>
       </div>
     );

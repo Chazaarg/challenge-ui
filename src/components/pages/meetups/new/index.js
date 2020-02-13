@@ -41,7 +41,11 @@ class NewMeetup extends Component {
 
   handleSubmit = async e => {
     e.preventDefault();
-    const res = await axios.post("http://localhost:3002/meetups", this.state);
+    const res = await axios.post("http://localhost:3002/meetups", this.state, {
+      headers: {
+        Authorization: this.props.auth.getToken()
+      }
+    });
     if (res.data.type === "error") {
       this.props.validation.throwErrors(res.data.errors);
       return;
